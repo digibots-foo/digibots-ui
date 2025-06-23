@@ -12,7 +12,7 @@ export default function EventAttendees({ attendees }: Props) {
           <div className="w-12">
             <img
               src={attendee?.photoURL || "/user.png"}
-              alt={`Attendee Avatar ${attendee.id}`}
+              alt={`Attendee Avatar`}
             />
           </div>
         </div>

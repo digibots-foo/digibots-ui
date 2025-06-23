@@ -4,14 +4,27 @@ import EventCard from "./EventCard";
 import { AppEvent } from "../../lib/types";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { select } from "motion/react-client";
 
 type Props = {
   formOpen: boolean;
   setFormOpen: (open: boolean) => void;
+  formToggle: (event: AppEvent) => void;
+  selectedEvent: AppEvent | null;
 };
 
-export default function EventDashboard({ formOpen, setFormOpen }: Props) {
+export default function EventDashboard({
+  formOpen,
+  setFormOpen,
+  formToggle,
+  selectedEvent,
+}: Props) {
   const [appEvents, setAppEvents] = useState<AppEvent[]>(events);
+
+  const handleCreateEvent = (newEvent: AppEvent) => {
+    setAppEvents((prevEvents) => [...prevEvents, newEvent]);
+  };
+
   useEffect(() => {
     setAppEvents(events);
 
@@ -32,13 +45,17 @@ export default function EventDashboard({ formOpen, setFormOpen }: Props) {
           >
             <div className=" flex flex-col gap-4">
               {appEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  formToggle={formToggle}
+                />
               ))}
             </div>
           </motion.div>
         </AnimatePresence>
       </div>
-      <div className="w-2/5">
+      <div className="w-2/5 overflow-hidden">
         <AnimatePresence>
           {formOpen && (
             <motion.div
@@ -47,7 +64,12 @@ export default function EventDashboard({ formOpen, setFormOpen }: Props) {
               exit={{ opacity: 0, x: 200 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
             >
-              <EventForm setFormOpen={setFormOpen} />
+              <EventForm
+                key={selectedEvent?.id || "new-event-form"}
+                setFormOpen={setFormOpen}
+                createEvent={handleCreateEvent}
+                selectedEvent={selectedEvent}
+              />
             </motion.div>
           )}
         </AnimatePresence>
