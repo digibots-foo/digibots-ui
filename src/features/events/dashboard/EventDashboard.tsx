@@ -4,7 +4,7 @@ import EventCard from "./EventCard";
 import { AppEvent } from "../../lib/types";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { select } from "motion/react-client";
+// import { select } from "motion/react-client";
 
 type Props = {
   formOpen: boolean;
@@ -21,8 +21,22 @@ export default function EventDashboard({
 }: Props) {
   const [appEvents, setAppEvents] = useState<AppEvent[]>(events);
 
+  const handleDeleteEvent = (eventId: string) => {
+    setAppEvents((prevEvents) =>
+      prevEvents.filter((event) => event.id !== eventId)
+    );
+  };
+
   const handleCreateEvent = (newEvent: AppEvent) => {
     setAppEvents((prevEvents) => [...prevEvents, newEvent]);
+  };
+
+  const handleUpdateEvent = (updatedEvent: AppEvent) => {
+    setAppEvents((prevEvents) => {
+      return prevEvents.map((event) =>
+        event.id === updatedEvent.id ? updatedEvent : event
+      );
+    });
   };
 
   useEffect(() => {
@@ -49,6 +63,7 @@ export default function EventDashboard({
                   key={event.id}
                   event={event}
                   formToggle={formToggle}
+                  deleteEvent={handleDeleteEvent}
                 />
               ))}
             </div>
@@ -69,6 +84,7 @@ export default function EventDashboard({
                 setFormOpen={setFormOpen}
                 createEvent={handleCreateEvent}
                 selectedEvent={selectedEvent}
+                updateEvent={handleUpdateEvent}
               />
             </motion.div>
           )}

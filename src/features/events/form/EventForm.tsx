@@ -1,15 +1,18 @@
 import type { AppEvent } from "../../lib/types";
 import { users } from "../../lib/data/sampleData";
+import { u } from "motion/react-client";
 
 type Props = {
   setFormOpen: (open: boolean) => void;
   createEvent: (event: AppEvent) => void;
   selectedEvent?: AppEvent | null;
+  updateEvent?: (event: AppEvent) => void;
 };
 export default function EventForm({
   setFormOpen,
   createEvent,
   selectedEvent,
+  updateEvent,
 }: Props) {
   const initialValues = selectedEvent ?? {
     title: "",
@@ -22,20 +25,29 @@ export default function EventForm({
   // create an event
   const onSubmit = (formData: FormData) => {
     const data = Object.fromEntries(formData.entries()) as unknown as AppEvent;
-    createEvent({
-      ...data,
-      id: crypto.randomUUID(),
-      hostUid: users[0].uid,
-      attendees: [
-        {
-          id: users[0].uid,
-          displayName: users[0].displayName,
-          photoURL: users[0].photoURL,
-        },
-      ],
-    }); // Generate a unique ID for the new event
-    console.log("Form submitted with data:", data);
-    setFormOpen(false);
+
+    if (selectedEvent) {
+      updateEvent?.({
+        ...selectedEvent,
+        ...data,
+      });
+      setFormOpen(false);
+      return;
+    } else {
+      createEvent({
+        ...data,
+        id: crypto.randomUUID(),
+        hostUid: users[0].uid,
+        attendees: [
+          {
+            id: users[0].uid,
+            displayName: users[0].displayName,
+            photoURL: users[0].photoURL,
+          },
+        ],
+      });
+      setFormOpen(false);
+    }
   };
 
   return (
