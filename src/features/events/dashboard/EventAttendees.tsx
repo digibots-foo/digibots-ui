@@ -10,10 +10,7 @@ export default function EventAttendees({ attendees }: Props) {
       {attendees.map((attendee) => (
         <div className="avatar" key={attendee.id}>
           <div className="w-12">
-            <img
-              src={attendee?.photoURL || "/user.png"}
-              alt={`Attendee Avatar`}
-            />
+            <img src={attendee.photoURL || "/user.png"} alt="attendee avatar" />
           </div>
         </div>
       ))}

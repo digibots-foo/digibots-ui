@@ -1,28 +1,32 @@
-import type { AppEvent } from "../../lib/types";
+import { useAppDispatch } from "../../../stores/store";
+import { AppEvent } from "../../lib/types";
+import { deleteEvent, toggleForm } from "../eventSlice";
 import EventAttendees from "./EventAttendees";
 
 type Props = {
   event: AppEvent;
-  formToggle: (event: AppEvent) => void;
-  deleteEvent?: (eventId: string) => void;
 };
 
-export default function EventCard({ event, formToggle, deleteEvent }: Props) {
+export default function EventCard({ event }: Props) {
   const host = event.attendees.find((x) => x.id === event.hostUid);
+  const dispatch = useAppDispatch();
+
   return (
     <div className="card card-border bg-base-100 w-full">
       <div className="card-body">
         <div className="flex gap-3 items-center">
           <figure className="card-figure w-14 rounded-lg">
-            <img src={host?.photoURL || "/user.png"} alt="User Avatar" />
+            <img src={host?.photoURL || "/user.png"} alt="user avatar" />
           </figure>
           <div>
-            <h2 className="card-title">{event?.title}</h2>
-            <p className="text-sm text-neutral">{host?.displayName}</p>
+            <h2 className="card-title">{event.title}</h2>
+            <p className="text-sm text-neutral">
+              Hosted by {host?.displayName}
+            </p>
           </div>
         </div>
 
-        <div className="bg-base-200 -mx-6 my-3 px-4 border-y border-neutral/20">
+        <div className="bg-base-200 -mx-6 my-3 px-4 py-2 border-y border-neutral/20">
           <EventAttendees attendees={event.attendees} />
         </div>
 
@@ -30,13 +34,13 @@ export default function EventCard({ event, formToggle, deleteEvent }: Props) {
           <div className="flex flex-1">{event.description}</div>
           <div className="flex gap-3">
             <button
+              onClick={() => dispatch(deleteEvent(event.id))}
               className="btn btn-error"
-              onClick={() => deleteEvent(event.id)}
             >
               Delete
             </button>
             <button
-              onClick={() => formToggle(event)}
+              onClick={() => dispatch(toggleForm(event))}
               className="btn btn-primary"
             >
               View
